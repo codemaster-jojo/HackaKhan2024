@@ -1,0 +1,86 @@
+import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the screen
+screen_width = 800
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("American History Quiz")
+
+background_image = pygame.image.load("Desktop/colonial_bg.jpg").convert()
+background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
+ORANGE = (250, 147, 95)
+GREEN = (166, 237, 149)
+BLUE = (166, 208, 245)
+# Fonts
+font = pygame.font.SysFont('Arial', 32)
+
+# Sample question and answers
+question = "Who was the first President of the United States?"
+answers = ["George Washington", "Thomas Jefferson", "Abraham Lincoln"]
+correct_answer = 0
+
+# Main function to display the question and answers
+def display_question():
+    global screen_width
+    # Clear the screen
+    screen.fill(WHITE)
+    
+    # Display the question
+    question_text = font.render(question, True, BLACK)
+    question_rect = question_text.get_rect(center=(screen_width/2, screen_height/3 - 50))
+    screen.blit(question_text, question_rect)
+    
+    # Display the answers
+    answer_y = screen_height/2
+    color = WHITE
+    for i, answer in enumerate(answers):
+        answer_text = font.render(answer, True, WHITE)
+        answer_rect = answer_text.get_rect(center=(screen_width/2, answer_y))
+        answer_rect_outer = answer_rect.inflate(100, 50)  # Inflate the rectangle to create some padding
+        if i == 0:
+            color = ORANGE
+        elif i == 1:
+            color = GREEN
+        else:
+            color = BLUE
+        pygame.draw.rect(screen, color, answer_rect_outer)  # Draw the rectangle
+    
+        screen.blit(answer_text, answer_rect)
+        answer_y += 100
+    
+    # Update the display
+    pygame.display.flip()
+
+# Function to check if the player clicked on the correct answer
+def check_answer(mouse_pos):
+    global correct_answer
+    selected_answer = (mouse_pos[1] - screen_height/2) // 50
+    if selected_answer == correct_answer:
+        print("Correct!")
+    else:
+        print("Incorrect!")
+
+# Main game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            check_answer(mouse_pos)
+    
+    # Display the question GUI
+    display_question()
+
+# Quit Pygame
+pygame.quit()
+sys.exit()
