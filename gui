@@ -50,7 +50,8 @@ class Button:
 
     def draw(self):
         # Change button color if hovered
-        color = self.hover_color if self.rect.collidepoint(pygame.mouse.get_pos()) else self.color
+        #color = self.hover_color if self.rect.collidepoint(pygame.mouse.get_pos()) else self.color
+        color = GRAY
         pygame.draw.rect(screen, color, self.rect)
         
         # Render text
@@ -113,11 +114,11 @@ def main_menu():
             display_description()  # Display description
         else:
             # Draw description
-
             screen.blit(desc, desc_rect)
-            
+
         # Update the display
         pygame.display.flip()
+
 
 if __name__ == "__main__":
     main_menu()
