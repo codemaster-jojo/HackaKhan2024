@@ -22,7 +22,9 @@ background_image = pygame.image.load(background_image_path)
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Background Image")
+pygame.display.set_caption("Tower Defense")
+
+waypoints = []
 
 # Main loop
 running = True
