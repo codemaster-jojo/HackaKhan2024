@@ -5,7 +5,7 @@ app = Flask(__name__)
 lessons = [
     {
         'id': 1,
-        'title': 'Causes of the Civil War',
+        'title': 'What Led to the Civil War?',
         'content': 'This lesson covers the causes of the Civil War.',
         'points': 100
     },
