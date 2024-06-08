@@ -15,7 +15,12 @@ lessons = [
         'content': 'This lesson covers key battles of the Civil War.',
         'points': 150
     },
-    # Add more lessons here
+    {
+        'id': 3,
+        'title': 'The Aftermath of the Civil War',
+        'content': 'This lesson covers the end of the Civil War and the Reconstruction Era.',
+        'points': 150
+    },
 ]
 
 @app.route('/')
@@ -29,6 +34,10 @@ def lesson1():
 @app.route('/lesson2')
 def lesson2():
     return render_template('lesson2.html', lesson=lessons[1])
+
+@app.route('/lesson3')
+def lesson3():
+    return render_template('lesson3.html', lesson=lessons[2])
 
 @app.route('/complete_lesson', methods=['POST'])
 def complete_lesson():
