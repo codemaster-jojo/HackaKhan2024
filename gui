@@ -24,7 +24,7 @@ def display_description():
     description_text = [
         "American Odyssey is an educational game designed to teach American history in an engaging way.",
         "Players will embark on a journey through key events and periods in American history,",
-        "answering questions and if correct, fight valiantly in a tower defense game.",
+        "answering questions and if correct, will fight valiantly in a tower defense game.",
         "Explore, learn, and experience the story of America like never before!"
     ]
     y_offset = 450
@@ -113,11 +113,11 @@ def main_menu():
             display_description()  # Display description
         else:
             # Draw description
-            screen.blit(desc, desc_rect)
 
+            screen.blit(desc, desc_rect)
+            
         # Update the display
         pygame.display.flip()
-
 
 if __name__ == "__main__":
     main_menu()
