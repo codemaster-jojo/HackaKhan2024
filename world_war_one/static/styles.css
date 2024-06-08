@@ -40,13 +40,15 @@ header h1 {
 .lessons li a {
     display: block;
     padding: 10px;
-    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
     color: #333;
     text-decoration: none;
     border-radius: 5px;
 }
 
 .lessons li a:hover {
-    background-color: rgba(255, 255, 255, 0.7); /* Lighter semi-transparent white background on hover */
+    background-color: white; /* Lighter semi-transparent white background on hover */
 }
+
+
 
