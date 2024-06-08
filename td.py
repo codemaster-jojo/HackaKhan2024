@@ -41,20 +41,12 @@ turret3 = pygame.transform.scale(turret3, (64, 64))
 tmp_enemy = pygame.image.load('tesla3.png')
 tmp_enemy = pygame.transform.scale(tmp_enemy, (64, 64))
 
-shop_bg = pygame.image.load('shopbg.png')
-shop_bg = pygame.transform.scale(shop_bg, (192, 704))
-
-shop_button = pygame.image.load('shopButton.png')
-shop_button = pygame.transform.scale(shop_button, (64, 64))
-
 waypoints = [[0, 5, 'E'], [2, 5, 'N'], [2, 1, 'E'], [4, 1, 'S'], [4, 7, 'W'],
              [1, 7, 'S'], [1, 9, 'E'], [8, 9, 'N'], [9, 6, 'W'], [6, 6, 'N'],
              [6, 2, 'E'], [9, 2, 'S']]
 
-money = 50
+money = 1000
 health = 100
-
-
 
 class Tower:
 
@@ -79,7 +71,7 @@ class Tower:
                 # if done reloading
                 if time.time() - self.last_shot >= self.hitspd:
                     pygame.draw.line(screen, (0, 0, 255), (self.x, self.y),
-                                     (enemy.x, enemy.y), 5)
+                     (enemy.x, enemy.y), 5)
                     enemy.hp -= self.dmg
                     print(enemy.hp)
                     self.last_shot = time.time()
@@ -107,7 +99,6 @@ class Turret3(Tower):
     def __init__(self, x, y):
         super().__init__(x, y, 0.3, 1, 128, 50, turret)
 
-
 class Enemy:
 
     def __init__(self, x, y, hp, speed, dmg, image):
@@ -117,7 +108,7 @@ class Enemy:
         self.hp = hp
         self.max_hp = hp
         self.speed = speed
-        self.dmg = dmg
+        self.dmg=dmg
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
@@ -141,6 +132,7 @@ class Enemy:
             enemies.remove(self)
             health -= self.dmg
             return
+            
 
         if d == 'N':
             self.y -= self.speed
@@ -157,18 +149,10 @@ class Enemy:
         (d == "E" and self.x - 32 - x1 >= 0) or \
         (d == "S" and  self.y - 32 - y1 >= 0) or \
         (d == "W" and self.x - 32 - x1 <= 0):
-            self.curr_waypt += 1
-
+                self.curr_waypt += 1
+    
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-
-def shop():
-    screen.blit(shop_bg, (640, 0))
-
-    font = pygame.freetype.Font("font.ttf", 24)
-    font.render_to(screen, (680, 30), f"Money: {money}", (255,255,255))
-
-    font.render_to(screen, (680, 60), f"Health: {health}", (255,255,255))
 
 
 towers = [Turret(3, 2)]
@@ -244,9 +228,6 @@ while running:
     for enemy in enemies:
         enemy.draw(screen)
         enemy.move()
-
-    shop()
-
 
     pygame.display.update()
 
