@@ -1,142 +1,120 @@
 import pygame
-import sys
 import random
 
-# Initialize Pygame
+# Initialize pygame
 pygame.init()
 
-# Constants
-WIDTH = 800
-HEIGHT = 600
+# Set the screen dimensions
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+
+# Set the colors
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
-PLAYER_SIZE = 50
-PLAYER_SPEED = 5
-ENEMY_SIZE = 30
-OBSTACLE_SIZE = 40
-LEVELS = ["Colonial America", "Revolutionary War", "Civil War", "World War I", "World War II", "Vietnam War"]
 
-# Set up the display
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Chronos Quest")
+# Set the snake and food sizes
+BLOCK_SIZE = 20
 
-# Player class
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.Surface((PLAYER_SIZE, PLAYER_SIZE))
-        self.image.fill(WHITE)
-        self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH // 2, HEIGHT // 2)
+# Set the speed of the snake
+SPEED = 20
 
-    def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            self.rect.x -= PLAYER_SPEED
-        if keys[pygame.K_RIGHT]:
-            self.rect.x += PLAYER_SPEED
-        if keys[pygame.K_UP]:
-            self.rect.y -= PLAYER_SPEED
-        if keys[pygame.K_DOWN]:
-            self.rect.y += PLAYER_SPEED
+# Create the screen
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Snake Game")
 
-# Obstacle class
-class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pygame.Surface((OBSTACLE_SIZE, OBSTACLE_SIZE))
-        self.image.fill((255, 0, 0))  # Red color for obstacles
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+# Function to draw the snake
+def draw_snake(snake_body):
+    for block in snake_body:
+        pygame.draw.rect(screen, GREEN, [block[0], block[1], BLOCK_SIZE, BLOCK_SIZE])
 
-# Enemy class
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pygame.Surface((ENEMY_SIZE, ENEMY_SIZE))
-        self.image.fill((0, 0, 255))  # Blue color for enemies
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.speed = random.randint(1, 3)
+# Function to generate food
+def generate_food():
+    food_x = random.randint(0, (SCREEN_WIDTH - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+    food_y = random.randint(0, (SCREEN_HEIGHT - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+    return food_x, food_y
 
-    def update(self):
-        self.rect.x += self.speed
-        if self.rect.left > WIDTH:
-            self.rect.right = 0
+# Main function for the game
+def game():
+    # Initialize the snake
+    snake = [[SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2]]
+    snake_direction = "RIGHT"
+    change_to = snake_direction
 
-# Level class
-class Level:
-    def __init__(self, name):
-        self.name = name
-        self.obstacles = pygame.sprite.Group()
-        self.enemies = pygame.sprite.Group()
+    # Initialize food
+    food_x, food_y = generate_food()
 
-    def start(self):
-        print("Starting level:", self.name)
-        if self.name == "Colonial America":
-            # Add some obstacles and enemies for this level
-            for _ in range(5):
-                x = random.randint(0, WIDTH)
-                y = random.randint(0, HEIGHT)
-                obstacle = Obstacle(x, y)
-                self.obstacles.add(obstacle)
-
-            for _ in range(3):
-                x = random.randint(0, WIDTH)
-                y = random.randint(0, HEIGHT)
-                enemy = Enemy(x, y)
-                self.enemies.add(enemy)
-
-    def finish(self):
-        print("Finishing level:", self.name)
-
-# Function to handle events
-def event_handler():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-# Main function
-def main():
-    clock = pygame.time.Clock()
-    player = Player()
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(player)
-
-    current_level = 0
-    levels = [Level(name) for name in LEVELS]
-
-    levels[current_level].start()
-
+    # Main game loop
     while True:
-        event_handler()
+        # Event handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and snake_direction != "RIGHT":
+                    change_to = "LEFT"
+                elif event.key == pygame.K_RIGHT and snake_direction != "LEFT":
+                    change_to = "RIGHT"
+                elif event.key == pygame.K_UP and snake_direction != "DOWN":
+                    change_to = "UP"
+                elif event.key == pygame.K_DOWN and snake_direction != "UP":
+                    change_to = "DOWN"
 
-        player.update()
+        # Change snake direction
+        snake_direction = change_to
 
-        # Check for collisions with obstacles
-        obstacle_collisions = pygame.sprite.spritecollide(player, levels[current_level].obstacles, False)
-        if obstacle_collisions:
-            print("Player collided with an obstacle!")
-            # Handle collision behavior here (e.g., reset player position)
+        # Move the snake
+        if snake_direction == "UP":
+            new_head = [snake[0][0], snake[0][1] - BLOCK_SIZE]
+        elif snake_direction == "DOWN":
+            new_head = [snake[0][0], snake[0][1] + BLOCK_SIZE]
+        elif snake_direction == "LEFT":
+            new_head = [snake[0][0] - BLOCK_SIZE, snake[0][1]]
+        elif snake_direction == "RIGHT":
+            new_head = [snake[0][0] + BLOCK_SIZE, snake[0][1]]
 
-        # Check for collisions with enemies
-        enemy_collisions = pygame.sprite.spritecollide(player, levels[current_level].enemies, False)
-        if enemy_collisions:
-            print("Player collided with an enemy!")
-            # Handle collision behavior here (e.g., decrease player health)
+        snake.insert(0, new_head)
 
+        # Check for collisions with walls
+        if (snake[0][0] >= SCREEN_WIDTH or snake[0][0] < 0 or 
+            snake[0][1] >= SCREEN_HEIGHT or snake[0][1] < 0):
+            game_over()
+
+        # Check for collisions with itself
+        for block in snake[1:]:
+            if snake[0] == block:
+                game_over()
+
+        # Check if snake has eaten food
+        if snake[0][0] == food_x and snake[0][1] == food_y:
+            food_x, food_y = generate_food()
+        else:
+            snake.pop()
+
+        # Clear the screen
         screen.fill(BLACK)
-        for obstacle in levels[current_level].obstacles:
-            screen.blit(obstacle.image, obstacle.rect)
-        for enemy in levels[current_level].enemies:
-            enemy.update()
-            screen.blit(enemy.image, enemy.rect)
 
-        all_sprites.draw(screen)
+        # Draw the snake and food
+        draw_snake(snake)
+        pygame.draw.rect(screen, RED, [food_x, food_y, BLOCK_SIZE, BLOCK_SIZE])
 
-        pygame.display.flip()
-        clock.tick(60)
+        # Update the display
+        pygame.display.update()
 
-if __name__ == "__main__":
-    main()
+        # Set the game speed
+        pygame.time.Clock().tick(SPEED)
+
+# Function to handle game over
+def game_over():
+    font = pygame.font.SysFont(None, 50)
+    text = font.render("Game Over", True, WHITE)
+    screen.blit(text, [SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 25])
+    pygame.display.update()
+    pygame.time.delay(2000)
+    game()
+
+# Start the game
+game()
