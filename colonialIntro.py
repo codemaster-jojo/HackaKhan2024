@@ -22,7 +22,7 @@ pygame.display.set_caption("Background Image")
 
 # title text
 font = pygame.font.Font('freesansbold.ttf', 32)
-text = font.render('Colonial Era: ', True, WHITE)
+text = font.render('Colonial Era and American Revolution: 1607-1783', True, WHITE)
 textRect = text.get_rect()
 textRect.center = (400,200)
 
