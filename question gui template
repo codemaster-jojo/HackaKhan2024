@@ -54,6 +54,9 @@ def display_question():
         pygame.draw.rect(screen, color, answer_rect_outer)  # Draw the rectangle
     
         screen.blit(answer_text, answer_rect)
+        answer_button_rect = pygame.Rect(answer_rect_outer)
+        answer_button_rect.center = (screen_width/2, answer_y)
+        answer_buttons.append((answer_button_rect, i))
         answer_y += 100
     
     # Update the display
@@ -62,14 +65,16 @@ def display_question():
 # Function to check if the player clicked on the correct answer
 def check_answer(mouse_pos):
     global correct_answer
-    selected_answer = (mouse_pos[1] - screen_height/2) // 50
-    if selected_answer == correct_answer:
-        print("Correct!")
-    else:
-        print("Incorrect!")
+    for button_rect, answer_index in answer_buttons:
+        if button_rect.collidepoint(mouse_pos):
+            if answer_index == correct_answer:
+                print("Correct!")
+            else:
+                print("Incorrect!")
 
 # Main game loop
 running = True
+answer_buttons = []
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
