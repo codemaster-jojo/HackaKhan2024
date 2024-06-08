@@ -8,3 +8,4 @@ MEMBERS:
 
 TOPIC: EdTech
 
+FIGJAM BOARD: https://www.figma.com/board/6qUXGhF2KjCZnUeFCx6G3z/Untitled?t=rXoiiykh7dujEUqy-0
