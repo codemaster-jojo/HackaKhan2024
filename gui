@@ -60,7 +60,7 @@ def quit_game():
 # Main menu function
 def main_menu():
 
-    background_image = pygame.image.load("Desktop/background1.jpg").convert()
+    background_image = pygame.image.load("world_war_one/static/background.jpg").convert()
     background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
     screen.blit(background_image, (0, 0))
     # Draw title
