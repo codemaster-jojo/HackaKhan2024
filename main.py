@@ -1,6 +1,7 @@
 import pygame
 import math
 import time
+import questions
 
 pygame.init()
 
@@ -68,7 +69,7 @@ waypoints = [[0, 5, 'E'], [2, 5, 'N'], [2, 1, 'E'], [4, 1, 'S'], [4, 7, 'W'],
              [1, 7, 'S'], [1, 9, 'E'], [8, 9, 'N'], [9, 6, 'W'], [6, 6, 'N'],
              [6, 2, 'E'], [9, 2, 'S']]
 
-money = 1000
+money = 50
 health = 100
 
 shop_indexes = []
@@ -410,14 +411,19 @@ def shop():
 towers = []
 enemies = [BasicEnemy(0,320)]
 waves = [[[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40],[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40]],
-         [[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40],[StrongEnemy(0, 320), 40], [StrongEnemy(0, 320), 40]]]
+         [[BasicEnemy(0, 320), 160], [BasicEnemy(0, 320), 40],[StrongEnemy(0, 320), 40], [StrongEnemy(0, 320), 40]],
+         [[StrongEnemy(0, 320), 160], [StrongEnemy(0, 320), 40],[StrongEnemy(0, 320), 40], [StrongEnemy(0, 320), 40]],
+         [[BasicEnemy(0, 320), 160], [BasicEnemy(0, 320), 5],[BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5],[BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5],[BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5]],
+         [[StrongEnemy(0, 320), 160], [StrongEnemy(0, 320), 10],[StrongEnemy(0, 320), 10], [StrongEnemy(0, 320), 10], [StrongEnemy(0, 320), 10]]]
+
 framecount = 0
 wavecount = 0
 indexcount = 0
 
+q = False
 
 def runwaves(waves):
-    global framecount, wavecount, indexcount
+    global framecount, wavecount, indexcount, q
     framecount += 1
 
     if wavecount >= len(waves):
@@ -427,6 +433,8 @@ def runwaves(waves):
         indexcount += 1
         if indexcount == len(waves[wavecount]):
             # ADD QUESTIONS HERE
+            q = True
+
             wavecount += 1
             indexcount = 0
             
@@ -444,6 +452,18 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             select_tower()
+
+            if q:
+                mouse_pos = pygame.mouse.get_pos()
+                if questions.check_answer(mouse_pos) == True:
+                    money += 50
+                    q = False
+                    questions.answer_selected = False
+                    print('YEEEEEES!')
+                elif questions.check_answer(mouse_pos) == False:
+                    q = False
+                    print('NOOOOOOOOOO!')
+                    questions.answer_selected = False
 
     for i in range(10):
         for j in range(11):
@@ -517,6 +537,9 @@ while running:
     if is_selecting:
         x, y = pygame.mouse.get_pos()
         exec(f'{is_selecting}({x}-32,{y}-32).draw(screen)')
+
+    if q:
+        questions.display_question()
 
     pygame.display.update()
 

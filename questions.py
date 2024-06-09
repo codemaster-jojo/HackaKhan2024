@@ -11,6 +11,7 @@ screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("American History Quiz")
 
+
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -35,11 +36,11 @@ with open('question_list.txt', 'r') as f:
     if index < len(q_list) - 1:  # Check if index is within bounds
         question = q_list[index]
         answers = q_list[index + 1]
-        print(answers)
+        # print(answers)
         answer_list = answers.split(',')  # Split answers by commas
-        print(answer_list)
-    else:
-        print("Index out of range.")
+        # print(answer_list)
+    # else:
+    #     print("Index out of range.")
     
 
 # Sample question and answers
@@ -61,6 +62,8 @@ shuffled_answers = []
 def display_question():
     global screen_width
     global answer_buttons
+
+    # print(current_question_index)
     
     answer_buttons = []  # Clear answer_buttons list
     # Clear the screen
@@ -99,21 +102,31 @@ def display_question():
 def check_answer(mouse_pos):
     global correct_answer
     global answer_selected
+    global current_question_index, answer_list, question, answers, index
+
     if not answer_selected:  # Check if an answer has already been selected
         for button_rect, answer_index in answer_buttons:
             if button_rect.collidepoint(mouse_pos):
-                if answer_index == correct_answer:
-                    print("Correct!")
-                else:
-                    print("Incorrect!")
                 answer_selected = True  # Set flag to True after an answer has been selected
+                current_question_index += 1
+                index = current_question_index * 2
+                question = q_list[index]
+                answers = q_list[index + 1]
+                answer_list = answers.split(',')
+                correct_answer = 0  # Set the correct answer index
+
+                if answer_index == correct_answer:
+                    return True
+                else:
+                    return False
+
 
 # Main game loop
 running = True
-current_question_index = 0  # Index to track the current question
 answer_buttons = []
+current_question_index = 0  # Index to track the current question
 answer_selected = False  # Flag to track if an answer has been selected
-
+'''
 while running:
     # Load the current question and answers
     index = current_question_index * 2
@@ -133,7 +146,6 @@ while running:
             mouse_pos = pygame.mouse.get_pos()
             check_answer(mouse_pos)
             if answer_selected:  # Move to the next question after an answer has been selected
-                current_question_index += 1
                 if current_question_index >= len(q_list) // 2:  # End the game if all questions have been asked
                     running = False
                 answer_selected = False  # Reset the answer_selected flag
@@ -144,3 +156,4 @@ while running:
 # Quit Pygame
 pygame.quit()
 sys.exit()
+'''
