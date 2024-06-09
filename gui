@@ -1,6 +1,7 @@
 import pygame
 import sys
-import main
+import middle_screen
+import time
 
 # Initialize Pygame
 pygame.init()
@@ -71,7 +72,8 @@ class Button:
 
 # Start game function
 def start_game():
-    main.main()
+    time.sleep(0.2)
+    middle_screen.main_menu()
 
 # Main menu function
 def main_menu():
