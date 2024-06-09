@@ -13,10 +13,7 @@ FIGJAM BOARD: https://www.figma.com/board/6qUXGhF2KjCZnUeFCx6G3z/Untitled?t=rXoi
 AMERICAN HISTORY TIME PERIODS:
 - Colonial America
 - American Revolution
-- Early America
 - Civil War
 - Gilded Age/Progressive Era
 - WW1
-- Great Depression
 - WW2
-- Cold War
