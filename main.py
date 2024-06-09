@@ -38,8 +38,25 @@ turret2 = pygame.transform.scale(turret2, (64, 64))
 turret3 = pygame.image.load('turret3.png')
 turret3 = pygame.transform.scale(turret3, (64, 64))
 
-tmp_enemy = pygame.image.load('tesla3.png')
-tmp_enemy = pygame.transform.scale(tmp_enemy, (64, 64))
+tesla = pygame.image.load('tesla1.png')
+tesla = pygame.transform.scale(tesla, (64, 64))
+
+tesla2 = pygame.image.load('tesla2.png')
+tesla2 = pygame.transform.scale(tesla2, (64, 64))
+
+tesla3 = pygame.image.load('tesla3.png')
+tesla3 = pygame.transform.scale(tesla3, (64, 64))
+
+enemy1 = pygame.image.load('basicEnemy1.png')
+enemy1 = pygame.transform.scale(enemy1, (64, 64))
+enemy2 = pygame.image.load('basicEnemy2.png')
+enemy2 = pygame.transform.scale(enemy2, (64, 64))
+
+strongEnemy1 = pygame.image.load('strongEnemy1.png')
+strongEnemy1 = pygame.transform.scale(strongEnemy1, (64, 64))
+strongEnemy2 = pygame.image.load('strongEnemy2.png')
+strongEnemy2 = pygame.transform.scale(strongEnemy2, (64, 64))
+
 
 shop_bg = pygame.image.load('shopbg.png')
 shop_bg = pygame.transform.scale(shop_bg, (192, 704))
@@ -51,16 +68,26 @@ waypoints = [[0, 5, 'E'], [2, 5, 'N'], [2, 1, 'E'], [4, 1, 'S'], [4, 7, 'W'],
              [1, 7, 'S'], [1, 9, 'E'], [8, 9, 'N'], [9, 6, 'W'], [6, 6, 'N'],
              [6, 2, 'E'], [9, 2, 'S']]
 
-money = 50
+money = 1000
 health = 100
 
+shop_indexes = []
 
+is_selecting = False
+
+def rot_center(image, rect, angle):
+    """rotate an image while keeping its center"""
+    rot_image = pygame.transform.rotate(image, angle)
+    rot_rect = rot_image.get_rect(center=rect.center)
+    return rot_image,rot_rect
+
+angle = 0
 
 class Tower:
 
     def __init__(self, x, y, dmg, hitspd, range, price, image):
-        self.x = x * 64 + 32
-        self.y = y * 64 + 32
+        self.x = x + 32
+        self.y = y + 32
         self.dmg = dmg
         self.hitspd = hitspd
         self.range = range
@@ -72,6 +99,9 @@ class Tower:
 
     def attack(self):
         global enemies
+        global angle
+
+        x, y = pygame.mouse.get_pos()
 
         for i, enemy in enumerate(enemies):
             if math.sqrt((self.x - enemy.x)**2 +
@@ -81,10 +111,20 @@ class Tower:
                     pygame.draw.line(screen, (0, 0, 255), (self.x, self.y),
                                      (enemy.x, enemy.y), 5)
                     enemy.hp -= self.dmg
-                    print(enemy.hp)
                     self.last_shot = time.time()
                     if enemy.hp <= 0:
                         enemies.pop(i)
+
+                '''
+                # calculate angle
+                print(enemy)
+                deltax, deltay = self.x-enemy.x, self.y-enemy.y
+                self.image, self.rect = rot_center(self.image, self.rect, -1*angle)
+                last_angle = angle
+                angle = math.degrees(math.atan(deltay/deltax))
+                print(angle-last_angle)
+                self.image, self.rect = rot_center(self.image, self.rect, angle-last_angle)
+                '''
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -93,24 +133,136 @@ class Tower:
 class Turret(Tower):
 
     def __init__(self, x, y):
-        super().__init__(x, y, 1, 1, 128, 50, turret)
+        super().__init__(x, y, 1, 1, 256, 50, turret)
 
 
 class Turret2(Tower):
 
     def __init__(self, x, y):
-        super().__init__(x, y, 0.5, 1, 128, 50, turret)
+        super().__init__(x, y, 1, 0.5, 256, 75, turret2)
 
 
 class Turret3(Tower):
 
     def __init__(self, x, y):
-        super().__init__(x, y, 0.3, 1, 128, 50, turret)
+        super().__init__(x, y, 1, 0.3, 256, 100, turret3)
+
+class Tesla(Tower):
+    def __init__(self, x, y):
+        super().__init__(x, y, 1, 1, 128, 100, tesla)
+
+    def attack(self):
+        global enemies
+        global angle
+
+        x, y = pygame.mouse.get_pos()
+
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    pygame.draw.circle(screen, (125, 249, 255), (self.x, self.y), self.range)
+                    break
+
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    enemy.hp -= self.dmg
+                    if enemy.hp <= 0:
+                        enemies.pop(i)
+        
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    self.last_shot = time.time()
+                    break
+
+        
+
+
+
+class Tesla2(Tower):
+    def __init__(self, x, y):
+        super().__init__(x, y, 2,1, 128, 150, tesla2)
+
+    def attack(self):
+        global enemies
+        global angle
+
+        x, y = pygame.mouse.get_pos()
+
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    pygame.draw.circle(screen, (125, 249, 255), (self.x, self.y), self.range)
+                    break
+
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    enemy.hp -= self.dmg
+                    if enemy.hp <= 0:
+                        enemies.pop(i)
+        
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    self.last_shot = time.time()
+                    break
+
+
+
+class Tesla3(Tower):
+    def __init__(self, x, y):
+        super().__init__(x, y, 2, 0.5, 128, 200, tesla3)
+
+    def attack(self):
+        global enemies
+        global angle
+
+        x, y = pygame.mouse.get_pos()
+
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    pygame.draw.circle(screen, (125, 249, 255), (self.x, self.y), self.range)
+                    break
+
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    enemy.hp -= self.dmg
+                    if enemy.hp <= 0:
+                        enemies.pop(i)
+        
+        for i, enemy in enumerate(enemies):
+            if math.sqrt((self.x - enemy.x)**2 +
+                         (self.y - enemy.y)**2) <= self.range:
+                # if done reloading
+                if time.time() - self.last_shot >= self.hitspd:
+                    self.last_shot = time.time()
+                    break
+
 
 
 class Enemy:
 
-    def __init__(self, x, y, hp, speed, dmg, image):
+    def __init__(self, x, y, hp, speed, dmg, images):
         self.x = x + 32
         self.y = y + 32
         self.curr_waypt = 0
@@ -118,9 +270,10 @@ class Enemy:
         self.max_hp = hp
         self.speed = speed
         self.dmg = dmg
-        self.image = image
-        self.rect = self.image.get_rect()
+        self.images = images
+        self.rect = (self.images[0].get_rect())
         self.rect.center = (self.x, self.y)
+        self.anim = 0
 
     def move(self):
         global waypoints
@@ -160,25 +313,137 @@ class Enemy:
             self.curr_waypt += 1
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        if self.anim % 30 == self.anim % 60:
+            screen.blit(self.images[0], self.rect)
+        else:
+            screen.blit(self.images[1], self.rect)
+        self.anim += 1
+
+
+class BasicEnemy(Enemy):
+
+    def __init__(self, x, y):
+        super().__init__(x, y, 1, 2, 1, [enemy1, enemy2])
+
+class StrongEnemy(Enemy):
+
+    def __init__(self, x, y):
+        super().__init__(x, y, 5, 2, 3, [strongEnemy1, strongEnemy2])
+
+
+def draw_shop_item(x, y, item, price, img):
+    screen.blit(shop_button, (x, y))
+    font = pygame.freetype.Font("font.ttf", 12)
+
+    screen.blit(img, (x + 4, y))
+
+    text_surface, rect = font.render(item, (0, 0, 0))
+    text_width, text_height = text_surface.get_size()
+    font.render_to(screen, (x + 32 - text_width / 2, y + 8), item,
+                   (255, 255, 255))
+
+    text_surface, rect = font.render(str(price), (0, 0, 0))
+    text_width, text_height = text_surface.get_size()
+    font.render_to(screen, (x + 32 - text_width / 2, y + 50), str(price),
+                   (255, 255, 255))
+
+    shop_indexes.append([x + 32, y + 32, item])
+
+
+def select_tower():
+    global is_selecting
+    global towers
+    global money
+
+    x, y = pygame.mouse.get_pos()
+    if not is_selecting:
+        for index in shop_indexes:
+            if abs(index[0] - x) < 32 and abs(index[1] - y) < 32:
+                is_selecting = index[2]
+                break
+    else:
+        if x < 640:
+            # exec(
+            #     f'tmp={is_selecting}({x}//64*64,{y}//64*64);towers.append(tmp); if tmp.price>money:towers.pop(-1); else:money-=tmp.price'
+            # )
+            tmp = eval(f'{is_selecting}({x}//64*64,{y}//64*64)')
+            towers.append(tmp)
+            if tmp.price > money:
+                towers.pop(-1)
+            else:
+                money -= tmp.price
+            is_selecting = False
+
 
 def shop():
     screen.blit(shop_bg, (640, 0))
 
-    font = pygame.freetype.Font("font.ttf", 24)
-    font.render_to(screen, (680, 30), f"Money: {money}", (255,255,255))
+    font = pygame.freetype.Font("font.ttf", 26)
+    font.render_to(screen, (672, 32), f"Money: {money}", (255, 255, 255))
 
-    font.render_to(screen, (680, 60), f"Health: {health}", (255,255,255))
+    font.render_to(screen, (672, 64), f"Health: {health}", (255, 255, 255))
+
+    # draw all shop items
+    # turret
+
+    temp = Turret(0, 0)
+    tmp = pygame.transform.scale(turret, (56, 56))
+    draw_shop_item(672, 96, 'Turret', temp.price, tmp)
+    temp = Turret2(0, 0)
+    tmp = pygame.transform.scale(turret2, (56, 56))
+    draw_shop_item(736, 96, 'Turret2', temp.price, tmp)
+    temp = Turret3(0, 0)
+    tmp = pygame.transform.scale(turret3, (56, 56))
+    draw_shop_item(672, 160, 'Turret3', temp.price, tmp)
+    temp = Tesla(0, 0)
+    tmp = pygame.transform.scale(tesla, (56, 56))
+    draw_shop_item(736, 160, 'Tesla', temp.price, tmp)
+    temp = Tesla2(0, 0)
+    tmp = pygame.transform.scale(tesla2, (56, 56))
+    draw_shop_item(672, 224, 'Tesla2', temp.price, tmp)
+    temp = Tesla3(0, 0)
+    tmp = pygame.transform.scale(tesla3, (56, 56))
+    draw_shop_item(736, 224, 'Tesla3', temp.price, tmp)
 
 
-towers = [Turret(3, 2)]
-enemies = [Enemy(0, 320, 2, 2, 1, tmp_enemy)]
+
+towers = []
+enemies = [BasicEnemy(0,320)]
+waves = [[[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40],[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40]],
+         [[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40],[StrongEnemy(0, 320), 40], [StrongEnemy(0, 320), 40]]]
+framecount = 0
+wavecount = 0
+indexcount = 0
+
+
+def runwaves(waves):
+    global framecount, wavecount, indexcount
+    framecount += 1
+
+    if wavecount >= len(waves):
+        return
+    
+    if waves[wavecount][indexcount][1] == framecount:
+        indexcount += 1
+        if indexcount == len(waves[wavecount]):
+            # ADD QUESTIONS HERE
+            wavecount += 1
+            indexcount = 0
+            
+            if wavecount >= len(waves):
+                return
+            
+        enemies.append(waves[wavecount][indexcount][0])
+        framecount = 0
+
 
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            select_tower()
 
     for i in range(10):
         for j in range(11):
@@ -246,7 +511,12 @@ while running:
         enemy.move()
 
     shop()
+    runwaves(waves)
 
+    # draw currently holding tower
+    if is_selecting:
+        x, y = pygame.mouse.get_pos()
+        exec(f'{is_selecting}({x}-32,{y}-32).draw(screen)')
 
     pygame.display.update()
 
