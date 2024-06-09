@@ -2,6 +2,7 @@ import pygame
 import math
 import time
 import questions
+import civilwar
 
 pygame.init()
 
@@ -410,8 +411,11 @@ def shop():
 
 towers = []
 enemies = [BasicEnemy(0,320)]
-waves = [[[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40],[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40]],
+waves = [[[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40],[BasicEnemy(0, 320), 40]], 
+         [[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40]],
+         [[BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40], [BasicEnemy(0, 320), 40]],
          [[BasicEnemy(0, 320), 160], [BasicEnemy(0, 320), 40],[StrongEnemy(0, 320), 40], [StrongEnemy(0, 320), 40]],
+         [[StrongEnemy(0, 320), 160], [StrongEnemy(0, 320), 40],[StrongEnemy(0, 320), 40], [StrongEnemy(0, 320), 40]],
          [[StrongEnemy(0, 320), 160], [StrongEnemy(0, 320), 40],[StrongEnemy(0, 320), 40], [StrongEnemy(0, 320), 40]],
          [[BasicEnemy(0, 320), 160], [BasicEnemy(0, 320), 5],[BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5],[BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5],[BasicEnemy(0, 320), 5], [BasicEnemy(0, 320), 5]],
          [[StrongEnemy(0, 320), 160], [StrongEnemy(0, 320), 10],[StrongEnemy(0, 320), 10], [StrongEnemy(0, 320), 10], [StrongEnemy(0, 320), 10]]]
@@ -421,9 +425,10 @@ wavecount = 0
 indexcount = 0
 
 q = False
+cw = False
 
 def runwaves(waves):
-    global framecount, wavecount, indexcount, q
+    global framecount, wavecount, indexcount, q, cw
     framecount += 1
 
     if wavecount >= len(waves):
@@ -444,8 +449,11 @@ def runwaves(waves):
         enemies.append(waves[wavecount][indexcount][0])
         framecount = 0
 
+    # if indexcount == 2:
+    #     cw = True
+
 def main():
-    global q, money, screen, waypoints, towers, enemies, waves, is_selecting
+    global q, money, screen, waypoints, towers, enemies, waves, is_selecting, cw
 
     running = True
     while running:
@@ -466,6 +474,8 @@ def main():
                         q = False
                         print('NOOOOOOOOOO!')
                         questions.answer_selected = False
+                # if cw:
+                #     cw = False
 
         for i in range(10):
             for j in range(11):
@@ -542,6 +552,10 @@ def main():
 
         if q:
             questions.display_question()
+        
+        # if cw:
+        #     civilwar.main()
+        #     print('aaa')
 
         pygame.display.update()
 
