@@ -1,12 +1,13 @@
 import pygame
 import sys
+import main
 
 # Initialize Pygame
 pygame.init()
 
 # Set up the screen
-screen_width = 800
-screen_height = 600
+screen_width = 832
+screen_height = 704
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("American History EdTech Game")
 
@@ -70,7 +71,7 @@ class Button:
 
 # Start game function
 def start_game():
-    print("Starting game...")
+    main.main()
 
 # Main menu function
 def main_menu():

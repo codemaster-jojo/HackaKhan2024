@@ -444,103 +444,105 @@ def runwaves(waves):
         enemies.append(waves[wavecount][indexcount][0])
         framecount = 0
 
+def main():
+    global q, money, screen, waypoints, towers, enemies, waves, is_selecting
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            select_tower()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                select_tower()
 
-            if q:
-                mouse_pos = pygame.mouse.get_pos()
-                if questions.check_answer(mouse_pos) == True:
-                    money += 50
-                    q = False
-                    questions.answer_selected = False
-                    print('YEEEEEES!')
-                elif questions.check_answer(mouse_pos) == False:
-                    q = False
-                    print('NOOOOOOOOOO!')
-                    questions.answer_selected = False
+                if q:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if questions.check_answer(mouse_pos) == True:
+                        money += 50
+                        q = False
+                        questions.answer_selected = False
+                        print('YEEEEEES!')
+                    elif questions.check_answer(mouse_pos) == False:
+                        q = False
+                        print('NOOOOOOOOOO!')
+                        questions.answer_selected = False
 
-    for i in range(10):
-        for j in range(11):
-            screen.blit(bg_tile, (i * 64, j * 64))
+        for i in range(10):
+            for j in range(11):
+                screen.blit(bg_tile, (i * 64, j * 64))
 
-    # draw path
-    screen.blit(path_EW, (waypoints[0][0] * 64, waypoints[0][1] * 64))
-    for i in range(0, len(waypoints) - 1):
-        if waypoints[i][2] == 'N':
-            for j in range(abs(waypoints[i][1] - waypoints[i + 1][1])):
-                screen.blit(path_NS, ((waypoints[i][0]) * 64,
-                                      (waypoints[i][1] - j - 1) * 64))
-        if waypoints[i][2] == 'E':
-            for j in range(abs(waypoints[i][0] - waypoints[i + 1][0])):
-                screen.blit(path_EW, ((waypoints[i][0] + j + 1) * 64,
-                                      (waypoints[i][1]) * 64))
-        if waypoints[i][2] == 'S':
-            for j in range(abs(waypoints[i][1] - waypoints[i + 1][1])):
-                screen.blit(path_NS, ((waypoints[i][0]) * 64,
-                                      (waypoints[i][1] + j + 1) * 64))
-        if waypoints[i][2] == 'W':
-            for j in range(abs(waypoints[i][0] - waypoints[i + 1][0])):
-                screen.blit(path_EW, ((waypoints[i][0] - j - 1) * 64,
-                                      (waypoints[i][1]) * 64))
-
-        # CORNERS
-        if i >= 1:
+        # draw path
+        screen.blit(path_EW, (waypoints[0][0] * 64, waypoints[0][1] * 64))
+        for i in range(0, len(waypoints) - 1):
             if waypoints[i][2] == 'N':
-                if waypoints[i - 1][2] == 'E':
-                    screen.blit(path_NW, ((waypoints[i][0]) * 64,
-                                          (waypoints[i][1]) * 64))
-                if waypoints[i - 1][2] == 'W':
-                    screen.blit(path_NE, ((waypoints[i][0]) * 64,
-                                          (waypoints[i][1]) * 64))
+                for j in range(abs(waypoints[i][1] - waypoints[i + 1][1])):
+                    screen.blit(path_NS, ((waypoints[i][0]) * 64,
+                                        (waypoints[i][1] - j - 1) * 64))
             if waypoints[i][2] == 'E':
-                if waypoints[i - 1][2] == 'N':
-                    screen.blit(path_ES, ((waypoints[i][0]) * 64,
-                                          (waypoints[i][1]) * 64))
-                if waypoints[i - 1][2] == 'S':
-                    screen.blit(path_NE, ((waypoints[i][0]) * 64,
-                                          (waypoints[i][1]) * 64))
+                for j in range(abs(waypoints[i][0] - waypoints[i + 1][0])):
+                    screen.blit(path_EW, ((waypoints[i][0] + j + 1) * 64,
+                                        (waypoints[i][1]) * 64))
             if waypoints[i][2] == 'S':
-                if waypoints[i - 1][2] == 'E':
-                    screen.blit(path_SW, ((waypoints[i][0]) * 64,
-                                          (waypoints[i][1]) * 64))
-                if waypoints[i - 1][2] == 'W':
-                    screen.blit(path_ES, ((waypoints[i][0]) * 64,
-                                          (waypoints[i][1]) * 64))
+                for j in range(abs(waypoints[i][1] - waypoints[i + 1][1])):
+                    screen.blit(path_NS, ((waypoints[i][0]) * 64,
+                                        (waypoints[i][1] + j + 1) * 64))
             if waypoints[i][2] == 'W':
-                if waypoints[i - 1][2] == 'N':
-                    screen.blit(path_SW,
-                                ((waypoints[i][0] - 1) * 64,
-                                 (waypoints[i][1]) *
-                                 64))  # PATCH HERE: THE -1 SHOULDNT EXIST
-                if waypoints[i - 1][2] == 'S':
-                    screen.blit(path_NW, ((waypoints[i][0]) * 64,
-                                          (waypoints[i][1]) * 64))
+                for j in range(abs(waypoints[i][0] - waypoints[i + 1][0])):
+                    screen.blit(path_EW, ((waypoints[i][0] - j - 1) * 64,
+                                        (waypoints[i][1]) * 64))
 
-    for tower in towers:
-        tower.draw(screen)
-        tower.attack()
+            # CORNERS
+            if i >= 1:
+                if waypoints[i][2] == 'N':
+                    if waypoints[i - 1][2] == 'E':
+                        screen.blit(path_NW, ((waypoints[i][0]) * 64,
+                                            (waypoints[i][1]) * 64))
+                    if waypoints[i - 1][2] == 'W':
+                        screen.blit(path_NE, ((waypoints[i][0]) * 64,
+                                            (waypoints[i][1]) * 64))
+                if waypoints[i][2] == 'E':
+                    if waypoints[i - 1][2] == 'N':
+                        screen.blit(path_ES, ((waypoints[i][0]) * 64,
+                                            (waypoints[i][1]) * 64))
+                    if waypoints[i - 1][2] == 'S':
+                        screen.blit(path_NE, ((waypoints[i][0]) * 64,
+                                            (waypoints[i][1]) * 64))
+                if waypoints[i][2] == 'S':
+                    if waypoints[i - 1][2] == 'E':
+                        screen.blit(path_SW, ((waypoints[i][0]) * 64,
+                                            (waypoints[i][1]) * 64))
+                    if waypoints[i - 1][2] == 'W':
+                        screen.blit(path_ES, ((waypoints[i][0]) * 64,
+                                            (waypoints[i][1]) * 64))
+                if waypoints[i][2] == 'W':
+                    if waypoints[i - 1][2] == 'N':
+                        screen.blit(path_SW,
+                                    ((waypoints[i][0] - 1) * 64,
+                                    (waypoints[i][1]) *
+                                    64))  # PATCH HERE: THE -1 SHOULDNT EXIST
+                    if waypoints[i - 1][2] == 'S':
+                        screen.blit(path_NW, ((waypoints[i][0]) * 64,
+                                            (waypoints[i][1]) * 64))
 
-    for enemy in enemies:
-        enemy.draw(screen)
-        enemy.move()
+        for tower in towers:
+            tower.draw(screen)
+            tower.attack()
 
-    shop()
-    runwaves(waves)
+        for enemy in enemies:
+            enemy.draw(screen)
+            enemy.move()
 
-    # draw currently holding tower
-    if is_selecting:
-        x, y = pygame.mouse.get_pos()
-        exec(f'{is_selecting}({x}-32,{y}-32).draw(screen)')
+        shop()
+        runwaves(waves)
 
-    if q:
-        questions.display_question()
+        # draw currently holding tower
+        if is_selecting:
+            x, y = pygame.mouse.get_pos()
+            exec(f'{is_selecting}({x}-32,{y}-32).draw(screen)')
 
-    pygame.display.update()
+        if q:
+            questions.display_question()
 
-pygame.quit()
+        pygame.display.update()
+
+    pygame.quit()
